@@ -11,6 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber,setNewNumber] = useState('')
   const [search,setSearch] = useState('')
+  const [searchResult,setSearchResult] = useState(persons)
 
   const clearInputs = () =>{
     setNewName('')
@@ -26,32 +27,36 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
     }else{
       setPersons(persons.concat(nameObject))
+      setSearchResult(persons.concat(nameObject))
     }
-    clearInputs
+    clearInputs()
   }
   
   const find = (event) => {
-    //Think Code
+    console.log(event.target.value)
+    
   }
   
   const handleNameChange = (event)=>{
+    console.log(event.target.value)
     setNewName(event.target.value)
   }
-
+  
   const handleNewNumber = (event)=>{
+    console.log(event.target.value)
     setNewNumber(event.target.value) 
   }
-
+  
   const handleNewSearch = (event) =>{
+    console.log(event.target.value)
     setSearch((event.target.value))
   }
 
-  console.log(persons)
   return (
     <div>
       <h2>Phonebook</h2>
         {/* Search needs improvements */}
-      <form onSubmit={find}> 
+      <form> 
         <div>filter shown with</div>
         <input value={search} onChange={handleNewSearch}/>
       </form>
@@ -65,7 +70,7 @@ const App = () => {
         />
       <h2>Numbers</h2>
 
-      <Persons persons ={persons}/>
+      <Persons persons ={searchResult}/>
     </div>
   )
 }
