@@ -46,6 +46,13 @@ const App = () => {
           setPersons(updated)
           setSearchResult(updated)
         })
+        .catch(error =>{
+          alert(
+            `The person ${nameObject.name} was already deleted from server`
+          )
+          setPersons(persons.filter(person => person.id !== check.id))
+          setSearchResult(persons.filter(person => person.id !== check.id))
+        })
       }
     }else{
       Services
