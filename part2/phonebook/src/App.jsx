@@ -3,6 +3,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import axios from 'axios'
+import Services from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -12,8 +13,8 @@ const App = () => {
   const [searchResult,setSearchResult] = useState(persons)
 
   useEffect(() =>{
-    axios
-        .get('http://localhost:3001/persons')
+    Services
+        .read()
         .then(response =>{
           setPersons(response.data)
           setSearchResult(response.data)
@@ -33,13 +34,25 @@ const App = () => {
 
   const handleAddContact = (event) =>{ 
     event.preventDefault()
-    const lastID = persons.length
-    const nameObject = { name: newName , number: newNumber, id: lastID + 1}
+    const nameObject = { name: newName , number: newNumber,}
     let check = persons.find((person)=>person.name === nameObject.name)
+    const baseUrl = 'http://localhost:3001/persons'
     if(check){
-      alert(`${newName} is already added to phonebook`)
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+        Services
+        .update(check.id, nameObject)
+        .then(response =>{
+          const updated = persons.map(person =>person.id !== check.id ? person : response.data)
+          setPersons(updated)
+          setSearchResult(updated)
+        })
+      }
     }else{
-      newSet(nameObject)
+      Services
+      .create(nameObject)
+      .then(response => {
+        newSet(response.data)
+      })
     }
     clearInputs()
   }
@@ -65,6 +78,18 @@ const App = () => {
     setSearch((event.target.value))
   }
 
+  const handleDelete = (personObj) =>{
+    const removed = persons.filter(person => person.id !== personObj.id)
+    if(window.confirm(`Delete ${personObj.name}`)){
+      Services
+      .deleter(personObj.id)
+      .then(response => {
+          setPersons(removed)
+          setSearchResult(removed)
+        })
+    }
+  }
+
 
   return (
     <div>
@@ -81,7 +106,7 @@ const App = () => {
         />
       <h2>Numbers</h2>
 
-      <Persons persons ={searchResult}/>
+      <Persons persons ={searchResult} handleDelete ={handleDelete}/>
     </div>
   )
 }
