@@ -1,18 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
+import axios from 'axios'
+
 const App = () => {
-  const [persons, setPersons] = useState([ 
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }  
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber,setNewNumber] = useState('')
   const [search,setSearch] = useState('')
   const [searchResult,setSearchResult] = useState(persons)
+
+  useEffect(() =>{
+    axios
+        .get('http://localhost:3001/persons')
+        .then(response =>{
+          setPersons(response.data)
+          setSearchResult(response.data)
+        })
+  },[])
+
 
   const clearInputs = () =>{
     setNewName('')
@@ -22,11 +29,9 @@ const App = () => {
   const newSet = (nameObject) =>{
     setPersons(persons.concat(nameObject))
     setSearchResult(persons.concat(nameObject))
-    console.log(persons)
-    console.log(searchResult)
   }
 
-  const handleAddContact = (event) =>{ //Too cluttered
+  const handleAddContact = (event) =>{ 
     event.preventDefault()
     const lastID = persons.length
     const nameObject = { name: newName , number: newNumber, id: lastID + 1}
@@ -40,9 +45,7 @@ const App = () => {
   }
   
   const find = (event) => {// make the code neet
-    console.log(event.target.value)
     const search = event.target.value
-    console.log(search)
     setSearchResult(
       search === '' 
         ? persons 
@@ -51,19 +54,17 @@ const App = () => {
   }
   
   const handleNameChange = (event)=>{
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
   
   const handleNewNumber = (event)=>{
-    console.log(event.target.value)
     setNewNumber(event.target.value) 
   }
   
   const handleNewSearch = (event) =>{
-    console.log(event.target.value)
     setSearch((event.target.value))
   }
+
 
   return (
     <div>
