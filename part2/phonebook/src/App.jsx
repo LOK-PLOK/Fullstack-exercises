@@ -4,6 +4,9 @@ import Persons from './components/Persons'
 import Filter from './components/Filter'
 import axios from 'axios'
 import Services from './services/persons'
+import Notification from './components/Notification'
+
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -11,6 +14,7 @@ const App = () => {
   const [newNumber,setNewNumber] = useState('')
   const [search,setSearch] = useState('')
   const [searchResult,setSearchResult] = useState(persons)
+  const [errorMessage, setErrorMessage] = useState('No ERRORS')
 
   useEffect(() =>{
     Services
@@ -45,21 +49,24 @@ const App = () => {
           const updated = persons.map(person =>person.id !== check.id ? person : response.data)
           setPersons(updated)
           setSearchResult(updated)
+          setErrorMessage(`Updated ${nameObject.name}`)
+          setTimeout(()=>{
+            setErrorMessage(null)
+          },5000)
         })
-        .catch(error =>{
-          alert(
-            `The person ${nameObject.name} was already deleted from server`
-          )
-          setPersons(persons.filter(person => person.id !== check.id))
-          setSearchResult(persons.filter(person => person.id !== check.id))
-        })
+        
       }
     }else{
       Services
       .create(nameObject)
       .then(response => {
         newSet(response.data)
+        setErrorMessage(`Added ${nameObject.name}`)
+        setTimeout(()=>{
+          setErrorMessage(null)
+        },5000)
       })
+      
     }
     clearInputs()
   }
@@ -94,13 +101,25 @@ const App = () => {
           setPersons(removed)
           setSearchResult(removed)
         })
+      .catch(error =>{
+        setErrorMessage(
+          `The person ${personObj.name} was already deleted from server`
+        )
+        setTimeout(()=>{
+          setErrorMessage(null)
+        },5000)
+        setPersons(removed)
+        setSearchResult(removed)
+      })
     }
   }
+
 
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification  message={errorMessage}/>
      
       <Filter find = {find} value ={search} handleNewSearch = {handleNewSearch}/>
 
@@ -114,6 +133,7 @@ const App = () => {
       <h2>Numbers</h2>
 
       <Persons persons ={searchResult} handleDelete ={handleDelete}/>
+      
     </div>
   )
 }
