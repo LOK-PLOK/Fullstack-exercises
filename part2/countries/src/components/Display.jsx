@@ -14,16 +14,15 @@ const Display = ({result, showCountry}) =>{
     }
 
     return(
-        <>
+        
         <div>
             {result.map(country => {
-                return 
-                <>
-                <p key ={country.name.common}>{country.name.common} <button onClick={showCountry(country)}>show</button></p> 
-                </>
+                return (
+                    <p key ={country.name.common}>{country.name.common} <button onClick={showCountry(country)}>show</button></p> 
+                )
             })}
         </div>
-        </>
+    
     )
 }
 

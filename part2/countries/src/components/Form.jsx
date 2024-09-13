@@ -1,6 +1,6 @@
 const Form = ({handleSubmit, handleSearch}) =>{
     return(
-        <form onChange={handleSubmit}> 
+        <form onSubmit={handleSubmit}> 
           find countries.
           <input onChange={handleSearch}/>
         </form>

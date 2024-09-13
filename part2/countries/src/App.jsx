@@ -6,20 +6,20 @@ const App = () => {
   const [countries, setCountries] = useState([]); 
   const [search, setSearch] = useState(''); 
   const [result, setResult] = useState([]);
-
+  
   useEffect(() => {
     services
-      .retrive()
-      .then(response => {
-        console.log(response.data);
-        setCountries(response.data);  
-      })
-      .catch(error => console.error('Error fetching data:', error));  
+    .retrive()
+    .then(response => {
+      setCountries(response.data);  
+    })
+    .catch(error => console.error('Error fetching data:', error));  
   }, []);
-
-  const find = (input) => (country) =>
-    country.name.common.toLowerCase().includes(input.toLowerCase());  
-
+  
+  const find = (input) => {
+    return (country) =>country.name.common.toLowerCase().includes(input.toLowerCase());  
+  }
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     const filtered = countries.filter(find(search));  
@@ -34,8 +34,8 @@ const App = () => {
   const showCountry = (value)=>{
     return () =>setResult([value])
   }
-
-  console.log(result)
+  
+  // console.log(result)
   return (
     <div>
       <Form handleSearch={handleSearch} handleSubmit={handleSubmit} />
