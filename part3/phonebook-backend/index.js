@@ -1,8 +1,11 @@
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
+const cors = require("cors");
 
+app.use(cors());
 app.use(express.json());
+app.use(express.static("dist"));
 
 morgan.token("body", (req) => {
   return JSON.stringify(req.body);
@@ -60,7 +63,6 @@ app.get("/api/info", (request, response) => {
   response.send(`<p>Phonbook has info for ${size} people</p> <p>${date}</p>`);
 });
 
-
 app.get("/api/persons/:id", (request, response) => {
   const id = String(request.params.id);
   const person = persons.find((person) => person.id === id);
@@ -107,6 +109,7 @@ app.post("/api/persons", (request, response) => {
   persons = persons.concat(person);
   // console.log("New person added:", person);
 
+  response.status(201);
   response.json(person);
 });
 
@@ -117,7 +120,7 @@ app.delete("/api/persons/:id", (request, response) => {
   response.status(204).end();
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
